@@ -13,7 +13,7 @@ import java.util.List;
 public class CategoriesPage extends AbsBasePage<CategoriesPage> {
 
 
-    @FindBy(css = "zzdkm7")
+    @FindBy(xpath = "//a[@class='sc-zzdkm7-0 kAwZgf']")
     protected List<WebElement> courses;
 
     @Inject
@@ -31,7 +31,6 @@ public class CategoriesPage extends AbsBasePage<CategoriesPage> {
     public CategoriesPage clickSelectedCourseByName(String courseName) {
         WebElement selectedCourseTile = findCourseByName(courseName);
         selectedCourseTile.click();
-
         return this;
     }
 }

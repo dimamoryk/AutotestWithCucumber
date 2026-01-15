@@ -29,7 +29,7 @@
 
 
         <base.url>https://otus.ru</base.url>
-        <browser.type>edge</browser.type>
+        <browser.type>chrome</browser.type>
     </properties>
 
     <dependencies>

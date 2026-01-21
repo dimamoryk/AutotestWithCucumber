@@ -1,13 +1,10 @@
 package pages;
 
-import annotations.Path;
-import annotations.UrlTemplate;
-import annotations.Urls;
+import annotations.*;
 import com.google.inject.Inject;
 import commons.AbsCommon;
 import exceptions.PathNotFoundException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -32,65 +29,49 @@ public abstract class AbsBasePage<T> extends AbsCommon {
         PageFactory.initElements(driver, this);
     }
 
-    protected String getPathWithData(String name, String... data) {
-
-        Class<T> clazz = (Class<T>) this.getClass();
-        UrlTemplate urlTemplate = null;
-
-        if (clazz.isAnnotationPresent(Urls.class)) {
-            Urls urls = clazz.getDeclaredAnnotation(Urls.class);
-            UrlTemplate[] urlTemplates = urls.urlTemplate();
-            urlTemplate = Arrays.stream(urlTemplates)
-                    .filter(template -> template.name().equals(name))
-                    .findFirst()
-                    .orElse(null);
-        }
-        if (urlTemplate == null && clazz.isAnnotationPresent(UrlTemplate.class)) {
-            urlTemplate = clazz.getDeclaredAnnotation(UrlTemplate.class);
-        }
-        if (urlTemplate != null) {
-            String template = urlTemplate.value();
-
-            for (int i = 0; i < data.length; i++) {
-                template = template.replace(String.format("{%d}", i + 1), data[i]);
-            }
-            if (!template.contains("?") && data.length > 0) {
-                template += "?";
-            }
-            for (String param : data) {
-                template += param + "&";
-            }
-            if (template.endsWith("&")) {
-                template = template.substring(0, template.length() - 1);
-            }
-            return template;
-        }
-
-        return "";
-    }
-
     protected String getPath() {
-
         Class<T> clazz = (Class<T>) this.getClass();
         if (clazz.isAnnotationPresent(Path.class)) {
-            Path pathObj = clazz.getDeclaredAnnotation(Path.class);
-            return pathObj.value();
+            return clazz.getDeclaredAnnotation(Path.class).value();
         }
         throw new PathNotFoundException();
     }
 
     public T open() {
-
         driver.get(baseUrl + getPath());
-
         return (T) this;
     }
 
     public T open(String name, String... data) {
-
         driver.get(baseUrl + getPathWithData(name, data));
-
         return (T) this;
+    }
+
+    protected String getPathWithData(String name, String... data) {
+        Class<T> clazz = (Class<T>) this.getClass();
+        UrlTemplate urlTemplate = null;
+
+        if (clazz.isAnnotationPresent(Urls.class)) {
+            Urls urls = clazz.getDeclaredAnnotation(Urls.class);
+            urlTemplate = Arrays.stream(urls.urlTemplate())
+                    .filter(template -> template.name().equals(name))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (urlTemplate == null && clazz.isAnnotationPresent(UrlTemplate.class)) {
+            urlTemplate = clazz.getDeclaredAnnotation(UrlTemplate.class);
+        }
+
+        if (urlTemplate != null) {
+            String template = urlTemplate.value();
+            for (int i = 0; i < data.length; i++) {
+                template = template.replace(String.format("{%d}", i + 1), data[i]);
+            }
+            return template;
+        }
+
+        return "";
     }
 
     public T checkElementContainsText(WebElement element, String expectedText) {
@@ -103,8 +84,7 @@ public abstract class AbsBasePage<T> extends AbsCommon {
             new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.visibilityOf(element));
         } catch (TimeoutException ex) {
-            throw new
-                    TimeoutException("Element '" + element + "' is still invisible.", ex);
+            throw new TimeoutException("Element '" + element + "' is still invisible.", ex);
         }
         return (T) this;
     }

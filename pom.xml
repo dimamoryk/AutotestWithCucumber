@@ -26,14 +26,15 @@
         <jsoup.version>1.21.1</jsoup.version>
         <suite.version>1.14.0</suite.version>
         <guava.version>33.5.0-jre</guava.version>
+        <checkstyle.version>12.3.1</checkstyle.version>
+        <checkstyleplagin.version>3.6.0</checkstyleplagin.version>
+        <commonstext.version>1.15.0</commonstext.version>
 
-
-        <base.url>https://otus.ru</base.url>
+        <base.url/>
         <browser.type>chrome</browser.type>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -119,7 +120,22 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-text</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commonstext.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -155,6 +171,23 @@
                         <include>**/*RunnerTest.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyleplagin.version}</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

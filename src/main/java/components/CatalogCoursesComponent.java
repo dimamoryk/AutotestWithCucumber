@@ -1,5 +1,4 @@
 package components;
-
 import annotations.Component;
 import com.google.inject.Inject;
 import org.apache.commons.lang3.time.DateUtils;
@@ -10,11 +9,9 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import support.GuiceScoped;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Component("xpath://a[@class='sc-zzdkm7-0 kAwZgf']")
@@ -24,12 +21,10 @@ public class CatalogCoursesComponent extends AbsComponent {
 
     @FindBy(xpath = "//a[@class='sc-zzdkm7-0 kAwZgf'][./descendant::*[normalize-space(text())='Java QA Engineer. Professional']]")
     protected List<WebElement> catalog;
-
     @Inject
     public CatalogCoursesComponent(GuiceScoped guiceScoped) {
         super(guiceScoped, guiceScoped.provideDriver());
     }
-
     public List<WebElement> getCatalog() {
         return catalog;
     }
@@ -39,10 +34,7 @@ public class CatalogCoursesComponent extends AbsComponent {
                 .filter(predicate)
                 .findFirst();
     }
-
-    // Основной метод проверки ранних и поздних курсов
     public void verifyEarliestAndLatestCourses() throws Exception {
-
         List<WebElement> catalogList = this.catalog;
 
         Optional<String> minStartDateOpt = catalogList.stream()
@@ -54,23 +46,16 @@ public class CatalogCoursesComponent extends AbsComponent {
                 .max(String::compareTo);
 
         WebElement earliestCourse = findElementByPredicate(catalog,
-                e -> e.getAttribute("data-start-date")
-                        .equals(minStartDateOpt
-                                .orElse(null))).orElseThrow(() ->
-                new NoSuchElementException("Ранний курс не найден"));
+                e -> e.getAttribute("data-start-date").equals(minStartDateOpt.orElse(null)))
+                .orElseThrow(() -> new NoSuchElementException("Ранний курс не найден"));
 
         WebElement latestCourse = findElementByPredicate(catalog,
-                e -> e.getAttribute("data-start-date")
-                        .equals(maxStartDateOpt
-                                .orElse(null))).orElseThrow(() ->
-                new NoSuchElementException("Поздний курс не найден"));
+                e -> e.getAttribute("data-start-date").equals(maxStartDateOpt.orElse(null)))
+                .orElseThrow(() -> new NoSuchElementException("Поздний курс не найден"));
 
-        // Проверяем детали обоих курсов
         verifyCourseDetailsUsingJsoup(earliestCourse);
         verifyCourseDetailsUsingJsoup(latestCourse);
     }
-
-    // Метод проверки деталей курса с использованием Jsoup
     private void verifyCourseDetailsUsingJsoup(WebElement course) throws Exception {
         if (course != null) {
             Document doc = Jsoup.connect(course.getAttribute("href")).get();
@@ -87,34 +72,24 @@ public class CatalogCoursesComponent extends AbsComponent {
                     .isEqualTo(DateUtils.parseDate(course.getAttribute("data-start-date")));
         }
     }
-
-    // Выделяет визуально самые ранние и поздние курсы
     public void highlightEarliestAndLatestCoursesVisually() {
-
-        // Получаем элемент самого раннего курса
         WebElement earliestCourse = findElementByPredicate(catalog,
-                e -> e.getAttribute("data-start-date")
-                        .equals(getMinStartDate())).orElseThrow(() ->
-                new NoSuchElementException("Ранний курс не найден"));
+                e -> e.getAttribute("data-start-date").equals(getMinStartDate()))
+                .orElseThrow(() -> new NoSuchElementException("Ранний курс не найден"));
 
-        // Получаем элемент самого позднего курса
         WebElement latestCourse = findElementByPredicate(catalog,
-                e -> e.getAttribute("data-start-date")
-                        .equals(getMaxStartDate())).orElseThrow(() ->
-                new NoSuchElementException("Поздний курс не найден"));
+                e -> e.getAttribute("data-start-date").equals(getMaxStartDate()))
+                .orElseThrow(() -> new NoSuchElementException("Поздний курс не найден"));
 
         executeScript("arguments[0].style.backgroundColor = '#FFD700';", earliestCourse); // Золотистый цвет
         executeScript("arguments[0].style.backgroundColor = '#8B008B';", latestCourse);   // Фиолетовый цвет
     }
-
-    // Приватные вспомогательные методы для получения минимума и максимума дат
     private String getMinStartDate() {
         return catalog.stream()
                 .map(e -> e.getAttribute("data-start-date"))
                 .min(String::compareTo)
                 .orElse(null);
     }
-
     private String getMaxStartDate() {
         return catalog.stream()
                 .map(e -> e.getAttribute("data-start-date"))

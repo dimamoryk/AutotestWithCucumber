@@ -11,7 +11,7 @@ public class CommonSteps {
 
     protected String baseUrl = System.getProperty("base.url", "https://otus.ru");
 
-    @Дано("Открыть браузер edge")
+    @Дано("Открыть браузер chrome")
     public void openBrowser() {
         guiceScoped.getDriver().get(baseUrl);
     }

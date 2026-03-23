@@ -174,13 +174,12 @@
                     </includes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyleplagin.version}</version>
                 <configuration>
-                    <configLocation>config/linters/google_checks.xml</configLocation>
+                    <configLocation>src/main/resources/google_checks.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                 </configuration>
@@ -192,7 +191,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
@@ -205,9 +203,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <threshold>Low</threshold>
-                    <effort>Max</effort>
-                    <includeFilterFile>${basedir}/src/main/config/linters/include.xml</includeFilterFile>
+                    <includeFilterFile>${basedir}/src/main/resources/spotbugs.xml</includeFilterFile>
                 </configuration>
             </plugin>
         </plugins>

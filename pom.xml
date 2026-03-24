@@ -11,8 +11,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.version>3.14.0</maven.compiler.version>
-        <source.version>24</source.version>
-        <target.version>24</target.version>
+        <source.version>21</source.version>
+        <target.version>21</target.version>
         <surefire.version>3.5.3</surefire.version>
 
         <selenium.version>4.39.0</selenium.version>
@@ -185,10 +185,12 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
+
                 </executions>
             </plugin>
             <plugin>
@@ -197,6 +199,7 @@
                 <version>${spotbugs.version}</version>
                 <executions>
                     <execution>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
